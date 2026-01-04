@@ -1,0 +1,1053 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+
+namespace taskmanagmet
+{
+    [Serializable]
+    class Time
+    {
+        public int year;
+        public int month;
+        public int day;
+        public Time()
+        {
+            year = 0;
+            month = 0;
+            day = 0;
+        }
+        public Time(int year, int month, int day)
+        {
+            this.year = year;
+            this.month = month;
+            this.day = day;
+        }
+    }
+
+    [Serializable]
+    class Person
+    {
+        private string name;
+        private string password;
+        private string role;
+        private string team;
+        public void Print()
+        {
+            Console.WriteLine("User name : " + name);
+        }
+        public void SetTeam(string team)
+        {
+            this.team = team;
+        }
+        public Person()
+        {
+            name = "";
+            password = "";
+            role = "";
+            team = "";
+        }
+        public Person(string name, string password, string role, string team)
+        {
+            this.name = name;
+            this.password = password;
+            this.team = team;
+            this.role = role;
+        }
+        public string GetUserName()
+        {
+            return name;
+        }
+        public string GetPassword()
+        {
+            return password;
+        }
+        public string GetRole()
+        {
+            return role;
+        }
+        public string GetTeam()
+        {
+            return team;
+        }
+    }
+    [Serializable]
+
+    class Task
+    {
+        int completeness = 0;
+        string creator = "";
+        string title = "";
+        string description = "";
+        string status = "";
+        string taker = "";
+        string updateDescription = "";
+        Time deliver = new Time(0, 0, 0);
+        Time due_date = new Time(0, 0, 0);
+        public void SetupdateDiscription(string updateDescription)
+        {
+            this.updateDescription = updateDescription;
+        }
+        public string GetupdateDescription()
+        {
+            return updateDescription;
+        }
+        public int CalculateDelay()
+        {
+            int d = deliver.day + deliver.month * 30 + deliver.year * 365;
+            int due = due_date.day + due_date.month * 30 + due_date.year * 365;
+            return due - d;
+        }
+        public Time GetDeliverTime()
+        {
+            return deliver;
+        }
+        public void SetDeliverTime(Time deliver)
+        {
+            this.deliver = deliver;
+        }
+        public int Getcompleteness()
+        {
+            return completeness;
+        }
+        public void Setcompleteness(int completeness)
+        {
+            this.completeness = completeness;
+        }
+        public void SetTaker(string taker)
+        {
+            this.taker = taker;
+        }
+        public string GetTaker()
+        {
+            return taker;
+        }
+        public void SetStatus(string status)
+        {
+            this.status = status;
+        }
+        public void Print()
+        {
+            Console.WriteLine("\n\nTask Creator     :  " + creator);
+            Console.WriteLine("Task title       :  " + title);
+            Console.WriteLine("Task Description :  " + description);
+            Console.WriteLine("Task status      :  " + status);
+            Console.WriteLine("Task due date    :  " + due_date.year + "/" + due_date.month + "/" + due_date.day);
+            Console.WriteLine("Task deliver date      :  " + deliver.year + "/" + deliver.month + "/" + deliver.day);
+            Console.WriteLine("Task last description : " + description);
+            Console.WriteLine("Task progress      :  " + completeness);
+        }
+        public Task()
+        {
+            creator = "";
+            title = "";
+            description = "";
+            status = "";
+            taker = "";
+            due_date = new Time(0, 0, 0);
+            completeness = 0;
+        }
+        public Task(string title, string description, string status, Time due_date, string creator)
+        {
+            this.title = title;
+            this.description = description;
+            this.status = status;
+            this.due_date = due_date;
+            this.creator = creator;
+            completeness = 0;
+        }
+        public string GetCreator()
+        {
+            return creator;
+        }
+        public string GetTitle()
+        {
+            return title;
+        }
+        public string GetDescription()
+        {
+            return description;
+        }
+        public string GetStatus()
+        {
+            return status;
+        }
+        public Time GetDue_date()
+        {
+            return due_date;
+        }
+
+    }
+    [Serializable]
+    class team
+    {
+        private string Owner;
+        private string name;
+        private string ID;
+        private string[] Users = new string[1000];
+        int num_members;
+
+        public team(string name, string ID, string Owner)
+        {
+            this.name = name;
+            this.ID = ID;
+            num_members = 0;
+            this.Owner = Owner;
+        }
+        public void AddMember(string name)
+        {
+            Users[num_members++] = name;
+        }
+        public void Print()
+        {
+            for (int i = 0; i < num_members; i++)
+                Console.WriteLine(i + 1 + "] name : " + Users[i]);
+        }
+        public string Getname()
+        {
+            return name;
+        }
+        public string GetID()
+        {
+            return ID;
+        }
+        public string GetOwner()
+        {
+            return Owner;
+        }
+    }
+
+    class main_Prog
+    {
+        Person[] ArrPerson = new Person[1000];
+        Task[] ArrTask = new Task[1000];
+        team[] ArrTeam = new team[1000];
+        int Counter_perosn = 0, Counter_Task = 0, Counter_Team = 0;
+
+        public main_Prog()
+        {
+        }
+        public void SignUpManager()
+        {
+            Console.WriteLine("Please Enter Manager info");
+            bool flag = true;
+            string name = "", password = "";
+
+            if (Counter_perosn == 0)
+            {
+                while (true)
+                {
+                    Console.Write("Manager username :");
+                    name = Console.ReadLine();
+                    if (name == "")
+                        Console.Write("\n\n         username can't be empty \n\n");
+                    else
+                        break;
+                }
+                while (true)
+                {
+                    Console.Write("Manager password :");
+                    password = Console.ReadLine();
+                    if (password == "")
+                        Console.Write("\n\n         password can't be empty \n\n");
+                    else
+                        break;
+                }
+                ArrPerson[Counter_perosn++] = new Person(name, password, "M", "None");//M stands for manager  None for no team
+                Console.WriteLine("Sign Up Completed");
+            }
+            else
+            {
+                while (flag)
+                {
+                    Console.Write("Manager username :");
+                    name = Console.ReadLine();
+                    if (name == "")
+                    {
+                        Console.Write("\n\n         Manager name can't be empty \n\n");
+                    }
+                    else
+                    {
+                        for (int i = 0; i < Counter_perosn; i++)
+                        {
+                            if (ArrPerson[i].GetUserName() == name)
+                            {
+                                Console.WriteLine("Manager name is used please enter another username");
+                                break;
+                            }
+                            else if (ArrPerson[i].GetUserName() != name && i == Counter_perosn - 1)
+                                flag = false;
+                        }
+                    }
+                }
+                while (true)
+                {
+                    Console.Write("Manager password :");
+                    password = Console.ReadLine();
+                    if (password == "")
+                        Console.Write("\n\n         password can't be empty \n\n");
+                    else
+                        break;
+                }
+                ArrPerson[Counter_perosn++] = new Person(name, password, "M", "None");//M stands for manager  None for no team
+                Console.WriteLine("\n\nSign Up Completed\n\n");
+            }
+            Save();
+        }
+        public void SignUpUser()
+        {
+            Console.WriteLine("Please Enter Manager info");
+            bool flag = true;
+            string name = "", password = "";
+
+            if (Counter_perosn == 0)
+            {
+                while (true)
+                {
+                    Console.Write("User username :");
+                    name = Console.ReadLine();
+                    if (name == "")
+                        Console.Write("\n\n         username can't be empty \n\n");
+                    else
+                        break;
+                }
+                while (true)
+                {
+                    Console.Write("User password :");
+                    password = Console.ReadLine();
+                    if (password == "")
+                        Console.Write("\n\n         password can't be empty \n\n");
+                    else
+                        break;
+                }
+                ArrPerson[Counter_perosn++] = new Person(name, password, "U", "None");//M stands for manager  None for no team
+                Console.WriteLine("Sign Up Completed");
+            }
+            else
+            {
+                while (flag)
+                {
+                    while (true)
+                    {
+                        Console.Write("User username :");
+                        name = Console.ReadLine();
+                        if (name == "")
+                            Console.Write("\n\n         username can't be empty \n\n");
+                        else
+                            break;
+                    }
+                    for (int i = 0; i < Counter_perosn; i++)
+                    {
+                        if (ArrPerson[i].GetUserName() == name)
+                        {
+                            Console.WriteLine("\n\nUSername is used please enter another username\n\n");
+                            break;
+                        }
+                        else if (ArrPerson[i].GetUserName() != name && i == Counter_perosn - 1)
+                            flag = false;
+                    }
+                }
+                while (true)
+                {
+                    Console.Write("User password :");
+                    password = Console.ReadLine();
+                    if (password == "")
+                        Console.Write("\n\n         password can't be empty \n\n");
+                    else
+                        break;
+                }
+                ArrPerson[Counter_perosn++] = new Person(name, password, "U", "None");//M stands for manager  None for no team
+                Console.WriteLine("Sign Up Completed");
+            }
+            Save();
+        }
+        public void SignInManager(string Username)
+        {
+            Load();
+            string password = "";
+            Console.Write("Enter password :");
+            password = Console.ReadLine();
+            if (Authenticate2(Username, password))
+            {
+                string choice = "";
+                while (choice != "5")
+                {
+                    Load();
+                    Console.WriteLine("\n\n[1] Creat new Task");
+                    Console.WriteLine("[2] Creat New Team And Assign User To Team");
+                    Console.WriteLine("[3] Assign Task To Team Member ");
+                    Console.WriteLine("[4] Generate Task Report");
+                    Console.WriteLine("[5] Sign Out");
+                    Console.Write("\n\nEnter choice : ");
+                    choice = Console.ReadLine();
+                    if (choice == "1")
+                    {
+                        CreateTask(Username);
+                        Save();
+                    }
+                    else if (choice == "2")
+                    {
+                        CreateTeam(Username);
+                        Save();
+                    }
+                    else if (choice == "3")
+                    {
+                        Assign_Task(Username);
+                        Save();
+                    }
+                    else if (choice == "4")
+                    {
+                        GenerateTaskReports(Username);
+                        Save();
+                    }
+                    else if (choice == "5")
+                    {
+                        Console.WriteLine("leaving....");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input");
+                    }
+                }
+            }
+        }
+        public void SignInUsar(string Username)
+        {
+            Load();
+            string password = "";
+            Console.Write("Enter password :");
+            password = Console.ReadLine();
+            if (Authenticate2(Username, password))
+            {
+                string choice = "";
+                while (choice != "3")
+                {
+                    Load();
+                    Console.WriteLine("\n\n[1] Track Task Progress");
+                    Console.WriteLine("[2] View Task Details");
+                    Console.WriteLine("[3] Sign Out");
+                    Console.Write("\n\nEnter choice : ");
+                    choice = Console.ReadLine();
+                    if (choice == "1")
+                    {
+                        TaskUpdate(Username);
+                        Save();
+                    }
+                    else if (choice == "2")
+                    {
+                        TaskView(Username);
+                        Save();
+                    }
+                    else if (choice == "3")
+                    {
+                        Console.WriteLine("leaving....");
+                        Save();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input");
+                    }
+                }
+            }
+        }
+        public void CreateTask(string Username)
+        {
+            Console.WriteLine("\n\n             please Fill the task information\n\n");
+            bool b = true;
+            string title = "", descreption = "";
+            if (Counter_Task == 0)
+            {
+                while (true)
+                {
+                    Console.Write("Task Title : ");
+                    title = Console.ReadLine();
+                    if (title == "")
+                        Console.Write("         Task Title can't be empty ");
+                    else
+                        break;
+                }
+
+                Console.Write("please enter the Descreption :");
+                descreption = Console.ReadLine();
+                int year = 0, month = 0, day = 0;
+                while (true)
+                {
+                    Console.Write("due-date Year : ");
+                    year = Convert.ToInt32(Console.ReadLine());
+                    if (year > 2023 && year < 2030)
+                        break;
+                    else
+                    {
+                        Console.WriteLine("\n\n             [Invalid input]\n\n");
+                        Console.WriteLine("\n\n          [2030 > year > 2023]\n\n");
+                    }
+                }
+                while (true)
+                {
+                    Console.Write("due-date month : ");
+                    month = Convert.ToInt32(Console.ReadLine());
+                    if (month > 0 && month < 13)
+                        break;
+                    else
+                    {
+                        Console.WriteLine("\n\n             [Invalid input]\n\n");
+                        Console.WriteLine("\n\n             [13 > month > 0]\n\n");
+                    }
+                }
+                while (true)
+                {
+                    Console.Write("due-date day : ");
+                    day = Convert.ToInt32(Console.ReadLine());
+                    if (day > 0 && day < 31)
+                        break;
+                    else
+                    {
+                        Console.WriteLine("\n\n             [Invalid input]\n\n");
+                        Console.WriteLine("\n\n             [31 > day > 0 ]\n\n");
+                    }
+                }
+                Time due_time = new Time(year, month, day);
+                ArrTask[Counter_Task++] = new Task(title, descreption, "To-Do", due_time, Username);
+            }
+            else
+            {
+                while (b)
+                {
+
+                    Console.Write("Task Title : ");
+                    title = Console.ReadLine();
+                    for (int i = 0; i < Counter_Task; i++)
+                    {
+                        if (ArrTask[i].GetTitle() == title)
+                        {
+                            Console.Write("\n\n             [Title should be uniqe]\n\n");
+                            break;
+                        }
+                        else if (i == Counter_Task - 1 && ArrTask[i].GetTitle() != title)
+                        {
+                            Console.Write("please enter the Descreption :");
+                            descreption = Console.ReadLine();
+                            int year = 0, month = 0, day = 0;
+                            while (true)
+                            {
+                                Console.Write("due-date Year : ");
+                                year = Convert.ToInt32(Console.ReadLine());
+                                if (year > 2023 && year < 2030)
+                                    break;
+                                else
+                                {
+                                    Console.WriteLine("\n\n             [Invalid input]\n\n");
+                                    Console.WriteLine("\n\n          [2030 > year > 2023]\n\n");
+                                }
+                            }
+                            while (true)
+                            {
+                                Console.Write("due-date month : ");
+                                month = Convert.ToInt32(Console.ReadLine());
+                                if (month > 0 && month < 13)
+                                    break;
+                                else
+                                {
+                                    Console.WriteLine("\n\n             [Invalid input]\n\n");
+                                    Console.WriteLine("\n\n             [13 > month > 0]\n\n");
+                                }
+                            }
+                            while (true)
+                            {
+                                Console.Write("due-date day : ");
+                                day = Convert.ToInt32(Console.ReadLine());
+                                if (day > 0 && day < 31)
+                                    break;
+                                else
+                                {
+                                    Console.WriteLine("\n\n             [Invalid input]\n\n");
+                                    Console.WriteLine("\n\n             [31 > day > 0 ]\n\n");
+                                }
+                            }
+                            Time due_time = new Time(year, month, day);
+                            ArrTask[Counter_Task++] = new Task(title, descreption, "To-Do", due_time, Username);
+                            b = false;
+                        }
+                    }
+                }
+            }
+
+        }
+        public void Assign_Task(string Username)
+        {
+            int counter_1 = 0, counter_2 = 0;
+            Console.WriteLine("\n\n\n\n             [tasks]");
+            for (int i = 0; i < Counter_Task; i++)
+            {
+                if (ArrTask[i].GetStatus() == "To-Do")
+                {
+                    ArrTask[i].Print();
+                    counter_1++;
+                }
+            }
+            Console.WriteLine("\n\n\n\n");
+            Console.WriteLine("             [users]\n\n");
+            for (int i = 0; i < Counter_Team; i++)
+            {
+                if (ArrTeam[i].GetOwner() == Username)
+                {
+                    ArrTeam[i].Print();
+                    counter_2++;
+                }
+            }
+            if (counter_2 == 0)
+            {
+                Console.Write("\n\n             [no availble team members]\n\n");
+            }
+            else if (counter_1 == 0)
+            {
+                Console.Write("\n\n             [no availble task]\n\n");
+            }
+            else
+            {
+                while (true)
+                {
+                    if (counter_1 == 0)
+                    {
+                        Console.Write("\n\n             [no availble task]\n\n");
+                        break;
+                    }
+                    Console.WriteLine("\n\n\n\n             [tasks]");
+                    for (int i = 0; i < Counter_Task; i++)
+                    {
+                        if (ArrTask[i].GetStatus() == "To-Do")
+                            ArrTask[i].Print();
+                    }
+                    Console.WriteLine("\n\n\n\n");
+                    Console.WriteLine("             [users]\n\n");
+                    for (int i = 0; i < Counter_Team; i++)
+                    {
+                        if (ArrTeam[i].GetOwner() == Username)
+                            ArrTeam[i].Print();
+                    }
+                    Console.WriteLine("\n\n\n\n");
+                    Console.WriteLine("please enter task title to-do and a user to take [ 0 to exit ]");
+                    Console.Write("please enter 0 to exit or enter to continue : ");
+                    string choice = Console.ReadLine();
+                    if (choice != "0")
+                    {
+                        Console.Write("\n\ntask name : ");
+                        string task = Console.ReadLine();
+                        Console.Write("Username (team member) : ");
+                        string name = Console.ReadLine();
+                        Console.WriteLine("\n\n");
+                        for (int i = 0; i < Counter_Team; i++)
+                        {
+                            if (ArrTeam[i].GetOwner() == Username)
+                            {
+                                for (int j = 0; j < Counter_perosn; j++)
+                                {
+                                    if (name == ArrPerson[j].GetUserName() && ArrPerson[j].GetRole() == "U")
+                                    {
+                                        for (int x = 0; x < Counter_Task; x++)
+                                        {
+                                            if (ArrTask[x].GetTitle() == task && ArrTask[x].GetCreator() == Username && ArrTask[x].GetStatus() == "To-Do")
+                                            {
+                                                ArrTask[x].SetTaker(name);
+                                                ArrTask[x].SetStatus("Pending");
+                                                j = Counter_perosn;
+                                                i = Counter_Team;
+                                                break;
+                                            }
+                                            else if (ArrTask[x].GetTitle() == task && ArrTask[x].GetCreator() != Username)
+                                            {
+                                                Console.WriteLine("\n\n             [Not Your Task]\n\n");
+                                                j = Counter_perosn;
+                                                i = Counter_Team;
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    else if (name != ArrPerson[j].GetUserName() && j == Counter_perosn - 1)
+                                        Console.WriteLine("\n\nthere isn't such a user in your team\n\n");
+                                }
+                                break;
+                            }
+
+                        }
+
+                    }
+                    else if (choice == "0")
+                        break;
+                }
+            }
+
+        }
+        public void GenerateTaskReports(string Username)//ghdfg
+        {
+            for (int x = 0; x < Counter_Task; x++)
+            {
+                if (ArrTask[x].GetCreator() == Username)
+                {
+                    Console.WriteLine("******");
+                    Console.WriteLine("Status : " + ArrTask[x].GetStatus());
+                    Console.WriteLine("completeness : " + ArrTask[x].Getcompleteness());
+                    Console.WriteLine("task taker : " + ArrTask[x].GetTaker());
+                    Console.WriteLine("Last update Description : " + ArrTask[x].GetupdateDescription());
+                    if (ArrTask[x].GetStatus() == "Done")
+                    {
+                        int delay = ArrTask[x].CalculateDelay();
+                        if (delay < 0)
+                            Console.WriteLine("the task has been delayed for : " + delay + "days");
+                        else
+                            Console.WriteLine("task Done whin-in time");
+                    }
+                    else if (ArrTask[x].GetStatus() == "To-Do")
+                    {
+                        int delay = ArrTask[x].CalculateDelay();
+                        if (delay < 0)
+                            Console.WriteLine("the task has been delayed for : " + delay + "days");
+                        else
+                            Console.WriteLine("task still in progress");
+                    }
+                    Console.WriteLine("******");
+                }
+            }
+        }
+        public void CreateTeam(string Username)
+        {
+            bool flag2 = true;
+            for (int i = 0; i < Counter_Team; i++)
+            {
+                if (ArrTeam[i].GetOwner() == Username)
+                    flag2 = false;
+            }
+            if (flag2)
+            {
+                string name = "", ID = "";
+                if (Counter_Team == 0)
+                {
+                    while (true)
+                    {
+                        Console.Write("Enter team name : ");
+                        name = Console.ReadLine();
+
+                        if (name == "")
+                            Console.Write("\n\n             team name can't be empty \n");
+                        else
+                            break;
+                    }
+                    while (true)
+                    {
+                        Console.Write("Enter team ID : ");
+                        ID = Console.ReadLine();
+                        if (ID == "")
+                            Console.Write("\n\n             team ID can't be empty \n");
+                        else
+                            break;
+                    }
+                    team t = new team(name, ID, Username);
+                    ArrTeam[Counter_Team++] = t;
+                    for (int i = 0; i < Counter_perosn; i++)
+                        if (ArrPerson[i].GetUserName() == Username)
+                            ArrPerson[i].SetTeam(name);
+                }
+                else
+                {
+                    bool b = true;
+                    while (b)
+                    {
+                        while (true)
+                        {
+                            Console.Write("Enter team name : ");
+                            name = Console.ReadLine();
+
+                            if (name == "")
+                                Console.Write("\n\n             team name can't be empty \n");
+                            else
+                                break;
+                        }
+                        while (true)
+                        {
+                            Console.Write("Enter team ID : ");
+                            ID = Console.ReadLine();
+                            if (ID == "")
+                                Console.Write("\n\n             team ID can't be empty \n");
+                            else
+                                break;
+                        }
+                        for (int i = 0; i < Counter_Team; i++)
+                        {
+                            if (ArrTeam[i].Getname() == name || ArrTeam[i].GetID() == ID)
+                            {
+                                Console.WriteLine("Invalid Id or name (both should be unique)");
+                            }
+                            else if (i == Counter_Team - 1)
+                            {
+                                team t = new team(name, ID, Username);
+                                ArrTeam[Counter_Team++] = t;
+                                for (int j = 0; j < Counter_perosn; j++)
+                                    if (ArrPerson[j].GetUserName() == Username)
+                                        ArrPerson[j].SetTeam(name);
+                                b = false;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                int count = 0;
+                for (int i = 0; i < Counter_perosn; i++)
+                {
+                    if (ArrPerson[i].GetRole() == "U" && ArrPerson[i].GetTeam() == "None")
+                    {
+                        ArrPerson[i].Print();
+                        count++;
+                    }
+                }
+                while (count > 0)
+                {
+                    Console.Write("Please enter username or 0 to exit ");
+                    string input = Console.ReadLine();
+                    if (input == "0")
+                        break;
+                    else
+                    {
+                        for (int i = 0; i < Counter_perosn; i++)
+                        {
+                            if (ArrPerson[i].GetRole() == "U" && ArrPerson[i].GetTeam() == "None" && ArrPerson[i].GetUserName() == input)
+                            {
+                                ArrPerson[i].SetTeam(name);
+                                Assign_User_to_Team(ArrPerson[i].GetUserName(), name);
+                                Console.WriteLine(ArrPerson[i].GetUserName() + " has been added to your team");
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("\n\n              [Manager can have 1 team only]\n\n");
+            }
+        }
+        public void Assign_User_to_Team(string Username, string Teamname)
+        {
+            for (int i = 0; i < Counter_Team; i++)
+                if (ArrTeam[i].Getname() == Teamname)
+                    ArrTeam[i].AddMember(Username);
+        }
+        public void TaskView(string Username)
+        {
+            for (int i = 0; i < Counter_Task; i++)
+            {
+                if (ArrTask[i].GetTaker() == Username)
+                {
+                    Console.WriteLine("*********");
+                    ArrTask[i].Print();
+                    Console.WriteLine("*********");
+                }
+            }
+        }
+        public void TaskUpdate(string Username)
+        {
+            TaskView(Username);
+            while (true)
+            {
+                Console.WriteLine("Enter a task you want to update {or 0 to leave}");
+                string input = Console.ReadLine();
+                if (input == "0")
+                    break;
+                else
+                {
+                    for (int i = 0; i < Counter_Task; i++)
+                    {
+                        if (ArrTask[i].GetTaker() == Username && input == ArrTask[i].GetTitle() && ArrTask[i].GetStatus() != "Done")
+                        {
+                            Console.WriteLine("Enter Task updateDescription : ");
+                            ArrTask[i].SetupdateDiscription(Console.ReadLine());
+                            Console.WriteLine("Enter Task progress : ");
+                            int progress = Convert.ToInt32(Console.ReadLine());
+                            ArrTask[i].Setcompleteness(progress);
+                            if (progress == 100)
+                                ArrTask[i].SetStatus("Done");
+                            Console.WriteLine("please enter the current as integer number : ");
+                            int year = 0, month = 0, day = 0;
+                            while (true)
+                            {
+                                Console.WriteLine("Year : ");
+                                year = Convert.ToInt32(Console.ReadLine());
+                                if (year > 2023 && year < 2030)
+                                    break;
+                                else
+                                    Console.WriteLine("Invalid input ");
+                            }
+                            while (true)
+                            {
+                                Console.WriteLine("month : ");
+                                month = Convert.ToInt32(Console.ReadLine());
+                                if (month > 0 && month < 13)
+                                    break;
+                                else
+                                    Console.WriteLine("Invalid input ");
+                            }
+                            while (true)
+                            {
+                                Console.WriteLine("day : ");
+                                day = Convert.ToInt32(Console.ReadLine());
+                                if (day > 0 && day < 31)
+                                    break;
+                                else
+                                    Console.WriteLine("Invalid input ");
+                            }
+                            Time T = new Time(year, month, day);
+                            ArrTask[i].SetDeliverTime(T);
+                            break;
+                        }
+                        else if (i == Counter_Task - 1)
+                            Console.WriteLine("Invalid input");
+
+                    }
+                }
+            }
+
+
+        }
+        public bool Authenticate(string name, string role)
+        {
+            for (int i = 0; i < Counter_perosn; i++)
+            {
+                if (name == ArrPerson[i].GetUserName() && role != ArrPerson[i].GetRole())
+                {
+                    Console.WriteLine("Wrong Role!!");
+                    return false;
+                }
+                else if (name == ArrPerson[i].GetUserName() && role == ArrPerson[i].GetRole())
+                {
+                    return true;
+                }
+                else if (name != ArrPerson[i].GetUserName() && i == Counter_perosn - 1)
+                {
+                    Console.WriteLine("Wrong username!!");
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool Authenticate2(string name, string password)
+        {
+            for (int i = 0; i < Counter_perosn; i++)
+            {
+                if (name == ArrPerson[i].GetUserName() && password == ArrPerson[i].GetPassword())
+                {
+                    return true;
+                }
+                else if (name == ArrPerson[i].GetUserName() && password == ArrPerson[i].GetPassword())
+                {
+                    Console.WriteLine("Wrong password!!");
+                    return false;
+                }
+            }
+            return true;
+        }
+        public void Load()
+        {
+            FileStream fs0 = new FileStream("Persons.txt", FileMode.Open, FileAccess.Read);
+            BinaryFormatter bf = new BinaryFormatter();
+            int count = 0;
+            while (fs0.Position < fs0.Length)
+            {
+                ArrPerson[count++] = (Person)bf.Deserialize(fs0);
+            }
+            fs0.Close();
+            Counter_perosn = count;
+            FileStream fs1 = new FileStream("Tasks.txt", FileMode.Open, FileAccess.Read);
+            BinaryFormatter bf1 = new BinaryFormatter();
+            count = 0;
+            while (fs1.Position < fs1.Length)
+            {
+                ArrTask[count++] = (Task)bf1.Deserialize(fs1);
+            }
+            fs1.Close();
+            Counter_Task = count;
+            FileStream fs2 = new FileStream("Teams.txt", FileMode.Open, FileAccess.Read);
+            BinaryFormatter bf2 = new BinaryFormatter();
+            count = 0;
+            while (fs2.Position < fs2.Length)
+            {
+                ArrTeam[count++] = (team)bf2.Deserialize(fs2);
+            }
+            fs2.Close();
+            Counter_Team = count;
+        }
+        public void Save()
+        {
+            FileStream fs0 = new FileStream("Persons.txt", FileMode.Create, FileAccess.Write);
+            BinaryFormatter bf = new BinaryFormatter();
+            for (int i = 0; i < Counter_perosn; i++)
+            {
+                bf.Serialize(fs0, ArrPerson[i]);
+            }
+            fs0.Close();
+            FileStream fs1 = new FileStream("Tasks.txt", FileMode.Create, FileAccess.Write);
+            BinaryFormatter bf1 = new BinaryFormatter();
+            for (int i = 0; i < Counter_Task; i++)
+            {
+                bf1.Serialize(fs1, ArrTask[i]);
+            }
+            fs1.Close();
+            FileStream fs2 = new FileStream("Teams.txt", FileMode.Create, FileAccess.Write);
+            BinaryFormatter bf2 = new BinaryFormatter();
+            for (int i = 0; i < Counter_Team; i++)
+            {
+                bf2.Serialize(fs2, ArrTeam[i]);
+            }
+            fs2.Close();
+        }
+    }
+
+
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            main_Prog prog = new main_Prog();
+            string Login = "";
+            prog.Load();
+            while (Login != "5")
+            {
+                Console.Write("[1] Sign up As Manager \n[2] Sign up As User (Team Member) \n[3] Sign In As Manager\n[4] Sign In As User (Team Member) \n[5] Exit\n\nEnter Your Choice : ");
+                Login = Console.ReadLine();
+                string Username = "";
+                if (Login == "1")
+                {
+                    prog.SignUpManager();
+                }
+                else if (Login == "2")
+                {
+                    prog.SignUpUser();
+                }
+                else if (Login == "3")
+                {
+                    Console.Write("Enter Username : ");
+                    Username = Console.ReadLine();
+                    if (prog.Authenticate(Username, "M"))
+                        prog.SignInManager(Username);
+                }
+                else if (Login == "4")
+                {
+                    Console.Write("Enter Username : ");
+                    Username = Console.ReadLine();
+                    if (prog.Authenticate(Username, "U"))
+                        prog.SignInUsar(Username);
+                }
+                else if (Login == "5")
+                    Console.WriteLine("\n.....Good Bye m3 al slamaa .....");
+                else
+                    Console.WriteLine("\n\nInvalid Input please enter a number from (1-5)\n\n");
+            }
+            prog.Save();
+        }
+    }
+}
